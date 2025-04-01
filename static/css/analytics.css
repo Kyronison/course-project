@@ -1,0 +1,465 @@
+/****************************************************
+  Контейнер и анимация
+*****************************************************/
+.analysis-container {
+    max-width: 1200px;
+    margin: 40px auto 2rem;
+    padding: 0 20px;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/****************************************************
+  Контролы (селекты и кнопка)
+*****************************************************/
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(14, 255, 238, 0.1);
+    border: 1px solid rgba(10, 255, 255, 0.15);
+    transition: all 0.3s ease;
+}
+
+select {
+    width: 100%;
+    padding: 1.1rem 3rem 1.1rem 1.5rem;
+    border: 1.5px solid rgba(10, 255, 255, 0.4);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #e0f8ff;
+    background: rgba(0, 34, 45, 0.6) url("data:image/svg+xml,%3Csvg xmlns='' viewBox='0 0 24 24' fill='rgba(10,255,255,0.7)'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 1rem center/1.2em;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    appearance: none;
+}
+
+select:hover {
+    border-color: #0affff;
+    box-shadow: 0 0 15px rgba(10, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+select:focus {
+    outline: none;
+    border-color: #0affff;
+    box-shadow: 0 0 25px rgba(10, 255, 255, 0.3),
+                inset 0 0 10px rgba(10, 255, 255, 0.1);
+}
+
+select option {
+    background: rgba(0, 20, 30, 0.9);
+    color: #b0f4ff;
+    padding: 1rem;
+    margin: 0.5rem 0;
+}
+
+/* Анимация свечения для контейнера */
+.controls:hover {
+    box-shadow: 0 0 35px rgba(14, 255, 238, 0.2);
+}
+
+.compare-btn {
+    background: rgba(0, 34, 45, 0.6); /* Полупрозрачный темно-синий фон */
+    color: #0affff;                  /* Неоновый цвет текста */
+    border: 2px solid rgba(10, 255, 255, 0.4); /* Неоновая граница */
+    padding: 0 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    justify-content: center;
+    font-size: 1.1rem;
+    height: 54px;
+    letter-spacing: 1px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 15px rgba(10, 255, 255, 0.1);
+}
+
+.compare-btn:hover {
+    background: rgba(10, 255, 255, 0.1); /* Светящийся эффект при наведении */
+    border-color: #0affff; /* Яркая неоновая граница */
+    box-shadow: 0 0 25px rgba(10, 255, 255, 0.3),
+                inset 0 0 10px rgba(10, 255, 255, 0.1);
+    transform: translateY(-2px) scale(1.02);
+    color: #fff;
+}
+
+/* Дополнительные эффекты для "глубины" */
+.compare-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(10, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.compare-btn:hover::before {
+    left: 100%;
+}
+
+
+/****************************************************
+  График
+*****************************************************/
+.chart-container {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
+    margin-bottom: 2rem;
+}
+
+/****************************************************
+  Блок отображения корреляции
+*****************************************************/
+.correlation-value {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #fff;
+}
+.correlation-value h3 {
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #0affff; /* Неоновый цвет */
+}
+.corr-num {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/****************************************************
+  Hero-секция (дизайн аналогичен index.html)
+*****************************************************/
+.hero-section {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem;
+}
+.hero-section .main-title {
+    font-size: 3rem;
+    color: #fff;
+    letter-spacing: 3px;
+    margin-bottom: 1.5rem;
+    animation: glitch-text 2.5s infinite;
+    text-transform: uppercase;
+}
+@keyframes glitch-text {
+    0% {
+        text-shadow: 0 0 1px #0affff;
+    }
+    20% {
+        text-shadow: 2px 0 3px #0affff;
+    }
+    40% {
+        text-shadow: -2px 0 3px #f60aff;
+    }
+    60% {
+        text-shadow: 2px 2px 3px #f60aff;
+    }
+    80% {
+        text-shadow: -2px -2px 3px #0affff;
+    }
+    100% {
+        text-shadow: 0 0 1px #0affff;
+    }
+}
+.hero-section .subtitle {
+    font-size: 1.2rem;
+    color: #b0b0b0;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+.hero-section .neon-button {
+    background: none;
+    color: #fff;
+    border: 2px solid #0affff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    transition: background 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+.hero-section .neon-button:hover {
+    background: #0affff;
+    color: #000;
+}
+
+/****************************************************
+  Адаптивность
+*****************************************************/
+@media (max-width: 768px) {
+    .controls {
+        grid-template-columns: 1fr;
+    }
+    .main-title {
+        font-size: 2rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* Стили для неонового селектора */
+.neo-select-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.neo-select-trigger {
+    padding: 1rem;
+    background: rgba(0, 34, 45, 0.8);
+    border: 1px solid rgba(10, 255, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    color: #e0f8ff; /* Добавлен цвет текста */
+}
+
+.neo-select-trigger:hover {
+    border-color: #0affff;
+    box-shadow: 0 0 15px rgba(10, 255, 255, 0.2);
+}
+
+.neo-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #0affff;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.neo-checkbox::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    width: 8px;
+    height: 12px;
+    border: solid #0affff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+}
+
+.neo-option.selected .neo-checkbox::after {
+    opacity: 1;
+}
+
+.neo-select-dropdown {
+    position: absolute;
+    width: 100%;
+    background: rgba(0, 20, 30, 0.95);
+    border: 1px solid rgba(10, 255, 255, 0.2);
+    border-radius: 8px;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.neo-search-container {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(10, 255, 255, 0.1);
+}
+
+.neo-search-input {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(10, 255, 255, 0.3);
+    border-radius: 6px;
+    color: #0affff;
+    font-size: 1rem;
+}
+
+.neo-options-list {
+    padding: 0.5rem 0;
+}
+
+.neo-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    color: #b0f4ff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.neo-option:hover {
+    background: rgba(10, 255, 255, 0.05);
+}
+
+.neo-option.selected {
+    background: rgba(10, 255, 255, 0.1);
+}
+
+/****************************************************
+  Стили для плиточного расположения карточек
+*****************************************************/
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.analysis-tile {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(10, 255, 255, 0.2);
+    padding: 2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.analysis-tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(10, 255, 255, 0.05),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.analysis-tile:hover {
+    border-color: #0affff;
+    box-shadow: 0 0 15px rgba(10, 255, 255, 0.1);
+}
+
+.analysis-tile:hover::before {
+    left: 100%;
+}
+
+.tile-content {
+    position: relative;
+    z-index: 1;
+}
+
+.tile-header {
+    color: #0affff;
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(10, 255, 255, 0.1);
+}
+
+.tile-description {
+    color: #a0f0ff;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.tile-button {
+    display: inline-block;
+    padding: 0.8rem 1.8rem;
+    background: transparent;
+    border: 1px solid rgba(10, 255, 255, 0.4);
+    color: #0affff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+}
+
+/* Добавьте в конец файла analytics.css */
+.tile-button.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background-color: #3a3a3a; /* Пример цвета для неактивной кнопки */
+}
+
+.tile-button.disabled:hover {
+    transform: none; /* Отключаем анимацию при наведении */
+    box-shadow: none;
+}
+
+.tile-button:hover {
+    /* background: rgba(10, 255, 255, 0.05); */
+    border-color: #0affff;
+}
+
+@media (max-width: 1024px) {
+    .analysis-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analysis-tile {
+        padding: 1.5rem;
+    }
+
+    .tile-header {
+        font-size: 1.2rem;
+    }
+}
+
+@font-face {
+    font-family: 'MyFont';
+    src: url('../fonts/LabGrotesque-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Рекомендация: определяет, как шрифт отображается во время загрузки */
+}

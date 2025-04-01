@@ -1,0 +1,949 @@
+/* Основные стили */
+:root {
+    --primary-bg: #f7f9fc;
+    --card-bg: #ffffff;
+    --primary-text: #ffffff;
+    --secondary-text: #64748b;
+    --accent-color: #4763e4;
+    --accent-hover: #3b51d1;
+    --border-color: #e2e8f0;
+    --success-color: #10b981;
+}
+
+body {
+    font-family: 'MyFont', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    line-height: 1.5;
+}
+
+.portfolio-container {
+    max-width: 800px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+}
+
+/* Заголовки */
+.portfolio-title {
+    font-size: 42px;
+    font-weight: 800;
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.portfolio-subtitle {
+    font-size: 18px;
+    font-weight: 100;
+    text-align: center;
+    color: #858585;
+    max-width: 760px;
+    margin: 0 auto 24px;
+}
+
+
+.info-link {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.info-link a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Форма портфеля */
+.portfolio-form {
+    background-color: #1A1A1A;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    margin-bottom: 40px;
+}
+
+.portfolio-form h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--primary-text);
+}
+
+/* Сумма инвестиций */
+.investment-amount {
+    margin-bottom: 30px;
+}
+
+.amount-input-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.amount-input {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.range-slider {
+    margin-bottom: 10px;
+}
+
+.range-slider input[type=range] {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: linear-gradient(to right, var(--accent-color) 0%, var(--accent-color) 10%, #e2e8f0 10%, #e2e8f0 100%);
+    border-radius: 10px;
+    outline: none;
+    margin: 10px 0;
+}
+
+.range-slider input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    background-color: white;
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Максимальная доля актива */
+.max-share-section {
+    margin-bottom: 30px;
+    font-family: 'MyFont', sans-serif;
+}
+
+.share-slider-container {
+    width: 100%;
+    position: relative;
+}
+
+.share-value {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--secondary-text);
+    font-size: 14px;
+}
+
+/* Уровень риска */
+.risk-slider-section {
+    margin-bottom: 30px;
+    font-family: 'MyFont', sans-serif;
+}
+
+.risk-slider-container {
+    width: 100%;
+}
+
+.risk-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: var(--secondary-text);
+    font-size: 14px;
+}
+
+/* Заголовки параметров */
+.portfolio-form h3.descriptions {
+    font-family: 'MyFont', sans-serif;
+    font-weight: 500; /* Меньшая жирность */
+    font-size: 24px; /* Увеличенный размер */
+    margin-bottom: 12px;
+    color: var(--primary-text);
+}
+/* Секторы экономики */
+.sectors-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sectors-section {
+    margin-bottom: 20px;
+}
+
+.sector-tile {
+    display: inline-flex; /* Ширина по содержимому */
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px; /* Скругление как у чипсов */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 36px; /* Фиксированная высота */
+}
+
+.sector-tile img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    flex-shrink: 0; /* Запрещаем уменьшение иконки */
+}
+
+.sector-tile span {
+    font-size: 14px;
+    white-space: nowrap; /* Запрещаем перенос текста */
+    padding-right: 4px;
+}
+
+/* Для выбранного состояния */
+.sector-tile.selected {
+    padding: 6px 12px; /* Сохраняем размеры */
+    /* Остальные стили selected */
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.sector-tile.selected span {
+    color: white;
+}
+
+/* Переключатель криптовалюты */
+.crypto-option {
+    margin-bottom: 30px;
+}
+
+.crypto-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.crypto-toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    background-color: #e2e8f0;
+    border-radius: 12px;
+    margin-right: 12px;
+    transition: background-color 0.3s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--accent-color);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-size: 16px;
+    color: var(--primary-text);
+}
+
+/* Кнопка генерации */
+.generate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 20px;
+}
+
+.generate-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.disclaimer {
+    text-align: center;
+    font-size: 14px;
+    color: var(--secondary-text);
+    margin: 0;
+}
+
+/* Результаты портфеля */
+.portfolio-results {
+    background-color: #1A1A1A;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.confirmation-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.results-title {
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* Прогноз стоимости */
+.forecast-container {
+    background-color: #f8fafc;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 40px 0;
+}
+
+.forecast-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--secondary-text);
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.forecast-value {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.forecast-percent {
+    color: var(--success-color);
+    font-size: 24px;
+}
+
+.analyst-info {
+    display: flex;
+    justify-content: space-between;
+    color: var(--secondary-text);
+    font-size: 14px;
+}
+
+/* Таблица активов */
+.composition-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.composition-header h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.details-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.assets-table {
+    width: 100%;
+    border-collapse: separate; /* Изменено с collapse на separate */
+    border-spacing: 0;
+    border: 2px solid #ffffff; /* Увеличена толщина */
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1A1A1A;
+}
+
+.assets-table th:last-child,
+.assets-table td:last-child {
+    border-right: none;
+}
+
+.assets-table tr:last-child td {
+    border-bottom: none;
+}
+
+.assets-table thead {
+    background-color: #1A1A1A;
+}
+
+.assets-table th {
+    text-align: left;
+    padding: 16px;
+    font-weight: 400;
+    color: #606060;
+    font-size: 14px;
+    border-bottom: 1px solid #ffffff;
+}
+
+.assets-table td {
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+}
+
+.company-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.company-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.company-name {
+    display: flex;
+    flex-direction: column;
+}
+
+.ticker {
+    font-weight: 400;
+    font-family: 'MyFont', sans-serif;
+    font-size: 16px;
+}
+
+.full-name {
+    font-size: 14px;
+    color: var(--secondary-text);
+}
+
+/* Новые стили */
+.amount-header {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    justify-content: space-between; /* Растягиваем элементы по ширине */
+    margin-bottom: 0;
+}
+
+/* Исправь эти блоки в portfolio.css */
+
+.amount-input-container {
+    position: relative;
+    width: 200px;
+    margin-left: 20px;
+}
+
+.amount-input {
+    width: 100%;
+    padding: 10px 50px 10px 20px; /* Увеличил левый padding */
+    font-size: 24px;
+    text-align: left !important; /* Принудительное выравнивание влево */
+    border: 1px solid var(--border-color);
+    background: transparent;
+    font-family: 'MyFont', sans-serif;
+    font-weight: 300;
+    color: var(--primary-text); /* Используй переменную цвета */
+}
+
+.currency-symbol {
+    position: absolute;
+    right: 20px; /* Сместил символ правее */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: var(--secondary-text);
+}
+
+/* Для слайдера суммы добавь */
+.investment-amount .range-slider input[type=range] {
+    margin-left: 0; /* Убедись, что слайдер не смещен */
+}
+
+.amount-header h3.descriptions {
+    margin-top: 20px;
+    height: 70px;
+    font-weight: 500;
+    font-size: 26px;
+    flex-shrink: 0;
+}
+
+/* Убираем стрелки для всех браузеров */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield; /* Стандарт */
+}
+
+/* Для современных браузеров */
+input[type="number"]::-webkit-search-cancel-button {
+    display: none;
+}
+
+/* Стили для максимальной доли актива */
+.max-share-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    margin-bottom: 0;
+}
+
+.percentage-container {
+    position: relative;
+    width: 200px;
+    margin-left: 20px;
+}
+
+.percentage-input {
+    width: 100%;
+    padding: 10px 50px 10px 20px;
+    font-size: 40px;
+    text-align: right;
+    border: none !important;
+    background: transparent;
+    font-family: 'MyFont', sans-serif;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.percentage-symbol {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 32px; /* Больший размер шрифта */
+    font-family: 'MyFont', sans-serif;
+    color: var(--secondary-text);
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Убираем рамку для этого поля */
+.percentage-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.range-slider input[type=range] {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: linear-gradient(to right, var(--accent-color) 0%, var(--accent-color) 10%, #e2e8f0 10%, #e2e8f0 100%);
+    border-radius: 10px;
+    outline: none;
+    margin: 10px 0;
+}
+
+.range-slider input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    background-color: white;
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.risk-selection {
+    margin-bottom: 20px;
+}
+
+.risk-tiles {
+    display: flex;
+    gap: 10px;
+}
+
+.risk-tile {
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.risk-tile.selected {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.api-error-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: #ff4444;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.portfolio-forecast {
+    background: #1A1A1A;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.forecast-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 30px 0;
+}
+
+.forecast-title {
+    color: #858585;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.forecast-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.forecast-value {
+    font-size: 32px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.forecast-percent-container {
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 8px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+}
+
+#forecast-percent {
+    color: #10b981;
+    font-size: 24px;
+    font-weight: 500;
+}
+.asset-name {
+    font-size: 14px;
+    color: #858585;
+}
+
+.asset-forecast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+.asset-forecast.positive {
+    background: #e6f4ea;
+    color: #0a9663;
+}
+
+.asset-forecast.negative {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.forecast-price {
+    margin-left: auto;
+    font-weight: 500;
+}
+
+.forecast-cell {
+    width: 200px;
+    max-width: 200px;
+}
+
+
+.asset-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.crypto-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f7931a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.price-comparison {
+    margin-top: 8px;
+    font-size: 0.9em;
+    display: flex;
+    gap: 8px;
+}
+
+.forecast-price {
+    color: #10b981;
+}
+
+.forecast-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+}
+
+.forecast-badge.up {
+    background: #e6f4ea;
+    color: #10b981;
+}
+
+.forecast-badge.down {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.total-invested {
+    font-weight: 200;
+}
+
+
+@font-face {
+    font-family: 'MyFont';
+    src: url('../fonts/LabGrotesque-Regular.woff2') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Рекомендация: определяет, как шрифт отображается во время загрузки */
+}
+
+/* Основной оверлей */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Видимое состояние */
+.loading-overlay.active {
+    opacity: 1;
+    display: flex;
+}
+
+/* Контейнер загрузчика */
+.loader {
+    text-align: center;
+    transform: translateY(-50px);
+}
+
+/* Неоновый спиннер */
+.neon-spinner {
+    width: 80px;
+    height: 80px;
+    border: 4px solid #4763e4;
+    border-top-color: transparent;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    position: relative;
+    animation: spin 1.5s linear infinite;
+    box-shadow: 0 0 25px rgba(71, 99, 228, 0.4);
+}
+
+/* Текст загрузки */
+.loading-text {
+    color: #fff;
+    font-size: 1.4em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    animation: textGlow 2s ease-in-out infinite;
+}
+
+/* Дополнительный текст */
+.loading-subtext {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+}
+
+/* Анимации */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes textGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+    50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.6); }
+}
+
+/* Блюр для фона */
+body.loading-active {
+    overflow: hidden;
+}
+
+body.loading-active main {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+}
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #4763e4;
+  border-radius: 1px;
+  animation: confetti-fall 2s linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.neon-pulse {
+  animation: neonPulse 1s ease-out;
+}
+
+@keyframes neonPulse {
+  0% {
+    filter: drop-shadow(0 0 5px #10b981);
+  }
+  100% {
+    filter: drop-shadow(0 0 20px #10b98199);
+  }
+}
+
+.completion-animation {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.animation-content {
+    text-align: center;
+    color: #fff;
+    animation: scaleUp 0.5s ease-out forwards;
+}
+
+.animation-content h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.animation-content p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.continue-btn {
+    padding: 10px 20px;
+    background-color: #4763e4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.continue-btn:hover {
+    background-color: #3b51d1;
+}
+
+/* Анимация масштабирования */
+@keyframes scaleUp {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

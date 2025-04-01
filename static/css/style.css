@@ -1,0 +1,289 @@
+/* -------------------------------
+   Базовые сбросы и шрифты
+--------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'MyFont', sans-serif !important;
+}
+
+html, body {
+  height: 100%;
+  color: #fff;         /* Текст по умолчанию */
+  overflow-x: hidden;
+  font-family: 'MyFont', sans-serif !important;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0a0a0a; /* Ваш тёмный фон */
+    z-index: -2; /* Ниже, чем canvas */
+}
+
+
+/* -------------------------------
+   Анимированный градиент фона (по желанию)
+--------------------------------*/
+/*
+body {
+  background: linear-gradient(135deg, #111 25%, #000 100%);
+  background-size: 400% 400%;
+  animation: neon-bg 15s ease infinite;
+}
+@keyframes neon-bg {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+*/
+/* -------------------------------
+   Canvas на заднем фоне
+--------------------------------*/
+#networkCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* -------------------------------
+   Прозрачная шапка (nav)
+   со "стеклом" + неоновой обводкой
+--------------------------------*/
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Логотип со "сплит"-акцентом */
+.logo {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.logo span {
+  color: #0affff; /* неоновый акцент */
+}
+
+/* Кнопки навигации */
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-button {
+  color: #fff;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none; /* если это ссылка */
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+.nav-button:hover {
+  border-color: #0affff;
+  color: #0affff;
+}
+
+/* -------------------------------
+   Hero-секция с глитч-эффектом
+--------------------------------*/
+.hero-section {
+  margin-top: 12rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.main-title {
+  position: relative;
+  font-size: 3rem;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 3px;
+  margin-bottom: 1.5rem;
+  animation: glitch-text 2.5s infinite;
+}
+
+/* "Глитч" анимация (два смещённых слоя + искажения) */
+@keyframes glitch-text {
+  0% {
+    text-shadow: 0 0 1px #0affff;
+  }
+  20% {
+    text-shadow: 2px 0 3px #0affff;
+  }
+  40% {
+    text-shadow: -2px 0 3px #f60aff;
+  }
+  60% {
+    text-shadow: 2px 2px 3px #f60aff;
+  }
+  80% {
+    text-shadow: -2px -2px 3px #0affff;
+  }
+  100% {
+    text-shadow: 0 0 1px #0affff;
+  }
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #b0b0b0;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+}
+
+.neon-button {
+  text-decoration: none;
+  background: none;
+  color: #fff;
+  border: 2px solid #0affff;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
+}
+.neon-button:hover {
+  background: #0affff;
+  color: #000;
+}
+
+/* -------------------------------
+   Блоки с преимуществами
+--------------------------------*/
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+/* Карточки */
+.feature-card {
+  background: rgba(255,255,255, 0.05);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(10, 255, 255, 0.3);
+}
+
+/* Иконки внутри карточек */
+.feature-card .main-icon {
+  width: 60px;
+  height: 60px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-bottom: 1rem;
+}
+
+/* Заголовок и текст карточки */
+.feature-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.feature-card p {
+  font-size: 0.95rem;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+/* Пример: анимации для "иконок" при hover (по желанию) */
+.analytics-icon:hover .main-icon {
+  stroke: #0affff;
+}
+.security-icon:hover .main-icon {
+  stroke: #ff00ff;
+}
+.performance-icon:hover .main-icon {
+  stroke: #ffdf00;
+}
+
+/* Пример: доп. keyframes для каких-то "фоновых" штрихов, если нужно */
+.analytics-icon .chart-bg {
+  opacity: 0;
+  stroke: rgba(0,255,255,0.1);
+  animation: drawCharts 2s forwards;
+}
+@keyframes drawCharts {
+  0% { opacity: 0; stroke-dasharray: 50; stroke-dashoffset: 50; }
+  100% { opacity: 1; stroke-dashoffset: 0; }
+}
+
+/* Можно расширить анимации для остальных иконок */
+
+/* -------------------------------
+   Мобильная адаптация (пример)
+--------------------------------*/
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* -------------------------------
+   Конец
+--------------------------------*/
+
+@font-face {
+    font-family: 'MyFont';
+    src: url('../fonts/LabGrotesque-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Рекомендация: определяет, как шрифт отображается во время загрузки */
+}
+

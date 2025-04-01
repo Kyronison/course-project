@@ -1,0 +1,86 @@
+<!-- templates/analytics_dashboard.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аналитика | Neon Glitch DeFi</title>
+    <!-- Общие стили -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/analytics.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <!-- Canvas на фоне -->
+    <canvas id="networkCanvas"></canvas>
+
+    <!-- Шапка -->
+    <nav>
+        <a href="/" class="logo">Course<span>Work</span></a>
+        <div class="nav-buttons">
+            <a href="/" class="nav-button">Главная</a>
+            <a href="/analytics" class="nav-button">Аналитика</a>
+            <a href="#" class="nav-button">Контакты</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-section">
+        <h1 class="main-title">Аналитические инструменты</h1>
+        <p class="subtitle">Выберите один из доступных инструментов для анализа данных</p>
+    </section>
+
+    <!-- Обновленная секция с карточками -->
+    <section class="analysis-container">
+        <div class="analysis-grid">
+            <!-- Плитка 1 -->
+            <div class="analysis-tile">
+                <div class="tile-content">
+                    <h3 class="tile-header">Корреляционный анализ</h3>
+                    <p class="tile-description">
+                        Сравнение динамики традиционных рынков с криптовалютами.
+                        Визуализация коэффициентов корреляции за выбранный период.
+                    </p>
+                    <a href="/analytics/correlation" class="tile-button">
+                        Исследовать →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Плитка 2 -->
+            <div class="analysis-tile">
+                <div class="tile-content">
+                    <h3 class="tile-header">Автоформирование портфеля</h3>
+                    <p class="tile-description">
+                        Формирование портфеля и его ребалансировка на основе
+                        математических методов и ваших предпочтений
+                    </p>
+                    <a href="/analytics/portfolio" class="tile-button">
+                        Сформировать →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Плитка 3 -->
+            <div class="analysis-tile">
+                <div class="tile-content">
+                    <h3 class="tile-header">TVL Мониторинг</h3>
+                    <p class="tile-description">
+                        Анализ общей заблокированной стоимости в DeFi-протоколах
+                        в сравнении с рыночными индикаторами.
+                    </p>
+                    <a href="javascript:void(0);" class="tile-button disabled">
+                        В разработке
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Скрипт для фоновой анимации (частицы) -->
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

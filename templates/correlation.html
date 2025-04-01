@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Сравнение отрасли и криптовалюты | Neon Glitch DeFi</title>
+
+    <!-- Подключаем Chart.js для построения графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Подключаем общий стиль (style.css) -->
+    <link rel="stylesheet" href="../static/css/style.css"/>
+
+    <!-- Подключаем отдельный стиль для нашей страницы аналитики (analytics.css) -->
+    <link rel="stylesheet" href="../static/css/analytics.css"/>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <!-- Canvas для фоновой анимации (частицы) -->
+    <canvas id="networkCanvas"></canvas>
+
+    <!-- Шапка (navbar) -->
+    <nav>
+        <a href="/" class="logo">Course<span>Work</span></a>
+        <div class="nav-buttons">
+            <a href="/" class="nav-button">Главная</a>
+            <a href="/analytics" class="nav-button">Аналитика</a>
+            <a href="#" class="nav-button">Контакты</a>
+        </div>
+    </nav>
+
+    <!-- Hero-секция -->
+    <section class="hero-section">
+        <h1 class="main-title">Сравнение отрасли и криптовалюты</h1>
+        <p class="subtitle">Выберите одну отрасль и одну криптовалюту, чтобы увидеть их взаимосвязь</p>
+    </section>
+
+    <!-- Основной контейнер -->
+    <div class="analysis-container">
+        <!-- Форма выбора отрасли и криптовалюты -->
+        <div class="controls">
+            <!-- Кастомный селектор для отрасли -->
+            <div class="neo-select-wrapper" id="sectorSelectWrapper">
+                <div class="neo-select-trigger">
+                    <span>Выберите отрасль</span>
+                </div>
+                <div class="neo-select-dropdown">
+                    <div class="neo-search-container">
+                        <input type="text" class="neo-search-input" placeholder="Поиск...">
+                    </div>
+                    <ul class="neo-options-list">
+                        <li class="neo-option option-item" data-value="Technology">
+                            <span class="neo-checkbox"></span>
+                            <span>Технологии</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="Utilities">
+                            <span class="neo-checkbox"></span>
+                            <span>Коммунальные услуги</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="RealEstate">
+                            <span class="neo-checkbox"></span>
+                            <span>Недвижимость</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="Industrials">
+                            <span class="neo-checkbox"></span>
+                            <span>Промышленность</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="HealthCare">
+                            <span class="neo-checkbox"></span>
+                            <span>Здравоохранение</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="Finance">
+                            <span class="neo-checkbox"></span>
+                            <span>Финансы</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="Raw">
+                            <span class="neo-checkbox"></span>
+                            <span>Сырье</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="Consumers">
+                            <span class="neo-checkbox"></span>
+                            <span>Потребительское</span>
+                        </li>
+                         <li class="neo-option option-item" data-value="Basic">
+                            <span class="neo-checkbox"></span>
+                            <span>Основные материалы</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="Crypto">
+                            <span class="neo-checkbox"></span>
+                            <span>Крипто (BTC)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Кастомный селектор для криптовалюты -->
+            <div class="neo-select-wrapper" id="cryptoSelectWrapper">
+                <div class="neo-select-trigger">
+                    <span>Выберите криптовалюту</span>
+                </div>
+                <div class="neo-select-dropdown">
+                    <div class="neo-search-container">
+                        <input type="text" class="neo-search-input" placeholder="Поиск...">
+                    </div>
+                    <ul class="neo-options-list">
+                        <li class="neo-option option-item" data-value="BTC">
+                            <span class="neo-checkbox"></span>
+                            <span>Bitcoin (BTC)</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="ETH">
+                            <span class="neo-checkbox"></span>
+                            <span>Ethereum (ETH)</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="BNB">
+                            <span class="neo-checkbox"></span>
+                            <span>Binance Coin (BNB)</span>
+                        </li>
+                        <li class="neo-option option-item" data-value="ADA">
+                            <span class="neo-checkbox"></span>
+                            <span>Cardano (ADA)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button class="compare-btn" id="compareBtn">Сравнить</button>
+        </div>
+
+        <!-- Контейнер для графика -->
+        <div class="chart-container">
+            <canvas id="correlationChart"></canvas>
+        </div>
+
+        <!-- Блок отображения коэффициента корреляции -->
+        <div class="correlation-value">
+            <h3>Коэффициент корреляции:</h3>
+            <div id="corrValue" class="corr-num">—</div>
+        </div>
+    </div>
+
+    <!-- Скрипт для фоновой анимации (script.js) -->
+    <script src="../static/js/script.js"></script>
+
+    <!-- Скрипт для логики нашей аналитики (analytics.js) -->
+    <script src="../static/js/analytics.js"></script>
+</body>
+</html>

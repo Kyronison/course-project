@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Neon Glitch DeFi</title>
+    <!-- Подключаем стили -->
+    <link rel="stylesheet" href="../static/css/style.css"/>
+</head>
+<body>
+<!-- Canvas для частиц на фоне -->
+<div class="background-overlay"></div>
+<canvas id="networkCanvas"></canvas>
+
+<!-- Прозрачная шапка (nav) со стеклянным эффектом -->
+<nav>
+    <a href="#" class="logo">Course<span>Work</span></a>
+    <div class="nav-buttons">
+        <a href="/" class="nav-button">Главная</a>
+        <a href="/analytics" class="nav-button">Аналитика</a>
+        <a href="#" class="nav-button">Контакты</a>
+    </div>
+</nav>
+
+<!-- "Геро"-секция с глитч-эффектом заголовка -->
+<section class="hero-section">
+    <h1 class="main-title">DeFi<br/>Analytics</h1>
+    <p class="subtitle">Анализ финансовых систем на высоком уровне</p>
+    <a href="/analytics" class="neon-button">Попробовать сейчас</a>
+</section>
+
+<!-- Блоки с преимуществами (features) -->
+<section class="features">
+    <div class="feature-card analytics-icon">
+
+        <svg class="main-icon" viewBox="0 0 24 24">
+            <path d="M3 3v18h18M7 16l4-4 3 3 5-5"/>
+        </svg>
+        <h3>Гибкая аналитика</h3>
+        <p>Сочетание офчейн/ончейн-данных + машинное обучение</p>
+    </div>
+    <div class="feature-card security-icon">
+        <svg class="main-icon" viewBox="0 0 24 24">
+            <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z"/>
+            <path class="lock" d="M12 11v3m0-3a2 2 0 100-4 2 2 0 000 4z"/>
+        </svg>
+        <h3>Безопасность</h3>
+        <p>Надёжное хранение ключей и конфиденциальных данных</p>
+    </div>
+    <div class="feature-card performance-icon">
+        <svg class="main-icon" viewBox="0 0 24 24">
+            <path class="bolt" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <h3>Скорость</h3>
+        <p>Моментальные расчёты на движке следующего поколения</p>
+    </div>
+</section>
+
+<!-- Подключаем ваш скрипт для анимации canvas (script.js) -->
+<script src="../static/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Builder</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/portfolio.css">
+    <!-- Вместо старой версии -->
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <!-- Canvas для частиц на фоне -->
+    <canvas id="networkCanvas"></canvas>
+
+    <!-- Прозрачная шапка (nav) -->
+    <nav>
+        <a href="/" class="logo">Course<span>Work</span></a>
+        <div class="nav-buttons">
+            <a href="/" class="nav-button">Главная</a>
+            <a href="/analytics" class="nav-button">Аналитика</a>
+            <a href="#" class="nav-button">Контакты</a>
+        </div>
+    </nav>
+
+    <div class="portfolio-container">
+        <!-- Заголовок -->
+        <h1 class="portfolio-title">Соберите портфель лучших акций</h1>
+        <p class="portfolio-subtitle">Вы задаете бюджет и параметры — наш алгоритм составляет портфель по рекомендациям аналитиков</p>
+
+        <div class="info-link">
+            <a href="#" id="howItWorks">Как это работает →</a>
+        </div>
+
+        <!-- Блок параметров -->
+        <div class="portfolio-form">
+            <!-- Сумма инвестиций -->
+            <div class="investment-amount">
+                <div class="amount-header">
+                    <h3 class="descriptions">Сумма инвестиций, ₽</h3>
+                    <div class="amount-input-container">
+                        <input type="number" id="investment-amount" class="amount-input" value="100000">
+                        <span class="currency-symbol">₽</span>
+                    </div>
+                </div>
+                <div class="range-slider">
+                    <input type="range" id="amount-slider" min="1000" max="1000000" value="100000" step="1000">
+                </div>
+            </div>
+
+            <!-- Максимальная доля актива -->
+            <div class="max-share-section">
+                <div class="max-share-header">
+                    <h3 class="descriptions">Максимальная доля актива</h3>
+                    <div class="percentage-container">
+                        <input type="number" id="max-share-input" class="percentage-input" value="10" min="0" max="100">
+                        <span class="percentage-symbol">%</span>
+                    </div>
+                </div>
+                <div class="range-slider">
+                    <input type="range" id="max-share-slider" min="0" max="100" value="10" step="1">
+                </div>
+            </div>
+
+            <!-- Уровень риска -->
+            <div class="risk-selection">
+                <h3 class="descriptions">Тип портфеля</h3>
+                <div class="risk-tiles">
+                    <div class="risk-tile" data-risk="0.5">
+                        <span>Консервативный</span>
+                    </div>
+                    <div class="risk-tile" data-risk="1">
+                        <span>Умеренный</span>
+                    </div>
+                    <div class="risk-tile" data-risk="1.5">
+                        <span>Агрессивный</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Плитки секторов экономики -->
+            <div class="sectors-section">
+                <h3 class = descriptions>Секторы экономики</h3>
+                <div class="sectors-grid" id="sectors-container">
+                    <!-- Секторы будут добавлены через JS -->
+                </div>
+            </div>
+
+            <!-- Включение криптовалюты -->
+            <div class="crypto-option">
+                <label class="crypto-toggle">
+                    <input type="checkbox" id="include-crypto" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Включать криптовалюту</span>
+                </label>
+            </div>
+
+            <!-- Кнопка генерации портфеля -->
+            <button class="generate-btn" id="generate-portfolio">
+                <span class="btn-icon">⚙</span>
+                Собрать портфель
+                <div class="loading-dots" style="display:none;"></div>
+            </button>
+
+            <p class="disclaimer">Не является индивидуальной инвестиционной рекомендацией</p>
+        </div>
+
+        <!-- Блок результатов (изначально скрытый) -->
+        <div class="portfolio-results" style="display: none;"> <!-- style="display: none;" -->
+            <!-- Заголовок с подтверждением -->
+            <div class="results-header">
+                <div class="confirmation-icon">✓</div>
+                <h2 class="results-title">Ваш портфель на <span id="total-invested"></span> ₽ собран</h2>
+            </div>
+
+            <!-- Прогноз стоимости -->
+            <div class="forecast-container">
+                <h3 class="forecast-title">Прогноз стоимости портфеля через год</h3>
+                <div class="forecast-content">
+                    <div class="forecast-value">
+                        <span id="forecast-amount"></span> ₽
+                    </div>
+                    <div class="forecast-percent-container">
+                        <span id="forecast-percent"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Таблица активов -->
+            <div class="portfolio-composition">
+                <div class="composition-header">
+                    <h3 class = "composition-name">Состав портфеля</h3>
+                    <a href="#" class="details-link">Детали портфеля</a>
+                </div>
+
+                <table class="assets-table">
+                    <thead>
+                        <tr>
+                            <th>Компания</th>
+                            <th>Цена</th>
+                            <th>Кол-во</th>
+                            <th>Сумма</th>
+                            <th>Рост за год в %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assets-container">
+                        <!-- Активы будут добавлены через JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/js/script.js"></script>
+    <script src="../static/js/portfolio.js"></script>
+    <!-- Добавьте в portfolio.html перед закрывающим тегом body -->
+    <div class="loading-overlay">
+    <div class="loader">
+        <div class="neon-spinner"></div>
+        <div class="loading-text">Идет анализ рынка...</div>
+        <div class="loading-subtext">Это займет всего несколько секунд</div>
+    </div>
+    </div>
+
+</body>
+</html>
