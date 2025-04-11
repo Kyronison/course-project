@@ -91,7 +91,7 @@ class Config:
         {"name": "TATN", "image_url": "https://beststocks.ru/api/file/stock/logos/RU:TATN.png", "company_name": "Татнефть"},
     ],
     "Crypto": [
-        {"name": "BTC-USD", "image_url": "https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=040", "company_name": "Bitcoin"}
+        {"name": "BTC-USD", "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg", "company_name": "Bitcoin"}
     ]
     }
     sectors_dict = {
