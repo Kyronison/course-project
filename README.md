@@ -44,20 +44,22 @@
 2.  **Создайте файл `.env`:**
     Скопируйте файл `.env.example` (если вы его создали) или создайте `.env` вручную в корневой папке проекта. Заполните необходимые переменные окружения:
     ```dotenv
-    # Переменные для подключения к PostgreSQL (для Docker Compose)
+    # Переменные для подключения к PostgreSQL
+    # Используйте те же значения, что и в вашем коде (os.getenv) или новые
     PG_USER=postgres
-    PG_PASS=ва_секретный_пароль_для_бд # Установите надежный пароль
-    PG_HOST=db
+    PG_PASS=aviasales
+    PG_HOST=db # Это значение используется ТОЛЬКО приложением внутри Docker, не меняйте
     PG_PORT=5432
     PG_DB=my_db
-
-    # Секретный ключ Flask
-    SECRET_KEY=ваш_очень_секретный_ключ_flask # Сгенерируйте с помощью: python -c 'import secrets; print(secrets.token_hex(16))'
-
+    
+    # Секретный ключ Flask (сгенерируйте случайную строку)
+    # python -c 'import secrets; print(secrets.token_hex(16))'
+    SECRET_KEY=ваш_очень_секретный_ключ_flask
+    
     # API Токен Tinkoff
-    TINKOFF_API_TOKEN=t.ВАШ_РЕАЛЬНЫЙ_ТОКЕН_TINKOFF
-
-    # Режим работы Flask (development или production)
+    TOKEN="t.r8FKw4DB8EUWXKeIZg4_HXKqFL3eH9rHbXvJa285qb-ROsUhBNprW9vOMmwqulFrS_2939mC6XkNQ-zcgCMz-Q"
+    
+    # Другие переменные окружения, если нужны
     FLASK_ENV=development
     ```
     **Важно:** Добавьте `.env` в ваш `.gitignore` файл!
