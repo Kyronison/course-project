@@ -2,12 +2,11 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from keras.src.layers import LSTM, Dropout
+from keras.src.layers import LSTM, Dropout, Dense
 from sklearn.preprocessing import MinMaxScaler
-from keras import Sequential
+from keras.src.models import Sequential
 import tensorflow as tf
 import numpy as np
-from tensorflow.python.keras.layers import Dense
 
 
 def load_data(ticker):

@@ -1,0 +1,39 @@
+services:
+  web:
+    build: .
+    container_name: analytical_dashboard_web
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - .:/app
+    ports:
+      - "5050:5000"
+    environment:
+      FLASK_APP: apps:create_app
+      FLASK_ENV: development
+      PG_USER: ${PG_USER}
+      PG_PASS: ${PG_PASS}
+      PG_HOST: db
+      PG_PORT: ${PG_PORT}
+      PG_DB: ${PG_DB}
+      TINKOFF_API_TOKEN: ${TOKEN}
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: analytical_dashboard_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_DB: ${PG_DB}
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
