@@ -1,14 +1,20 @@
-# data_loader.py
 import pandas as pd
 from app.models.models import HistoricalPrice, db
 from app.services.tinkoff_api import get_forecast_by_ticker
 from app.services.crypto.crypto_predictor import predict_future
-from app.services.crypto.crypto_api import get_last_price_crypto
 
 
 def load_clean_data(use_db=True):
     """
-    Загружает данные из БД или CSV в зависимости от параметра use_db
+    Загружает данные исторических цен из БД или CSV в зависимости от параметра use_db.
+
+    Args:
+        use_db (bool): Если True, данные загружаются из БД; если False, из CSV.
+
+    Returns:
+        pandas.DataFrame: DataFrame с очищенными историческими ценами в широком формате
+                          (индекс - дата, колонки - тикеры), либо пустой DataFrame
+                          в случае ошибки загрузки из БД.
     """
     if use_db:
         try:
@@ -32,7 +38,6 @@ def load_clean_data(use_db=True):
                 values='close',
                 aggfunc='first'
             ).ffill().dropna(axis=1, how='all').dropna()
-            print("DFNIK", df)
             return df
 
         except Exception as e:
@@ -52,15 +57,26 @@ def load_clean_data(use_db=True):
 
 def load_analyst_returns(companies, use_db=True):
     """
-    Загружает или рассчитывает прогнозные доходности аналитиков.
-    Функция возвращает словарь или Series с аналитическими данными.
+    Загружает или рассчитывает прогнозные доходности аналитиков/модели.
+
+    Для обычных акций используются прогнозы аналитиков через Tinkoff API.
+    Для криптовалют (оканчивающихся на -USD) используется предобученная модель
+    для прогнозирования будущей цены и расчета доходности.
+
+    Args:
+        companies (list): Список тикеров компаний/активов.
+        use_db (bool): Флаг, указывающий, использовать ли БД для получения
+                       текущей цены крипты (если применимо).
+
+    Returns:
+        dict: Словарь, где ключ - тикер, значение - прогнозная доходность
+              (в виде десятичной дроби).
     """
     mu_anal = {}
 
     for ticker in companies:
         if "-USD" not in ticker:  # Пропускаем криптовалюты
             forecast_data = get_forecast_by_ticker(ticker)
-            print(forecast_data)
             # Проверяем, есть ли данные и содержит ли словарь ключ "price_change_rel"
             if forecast_data and isinstance(forecast_data, dict) and "price_change_rel" in forecast_data:
                 price_change = forecast_data["price_change_rel"]
