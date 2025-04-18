@@ -4,6 +4,24 @@ from app.utils.data_processing import normalize_data, align_series, process_time
 
 
 def get_correlation_data(sector_tickers, crypto_ticker):
+    """
+    Рассчитывает коэффициент корреляции между агрегированным индексом сектора акций
+    и данными по указанной криптовалюте.
+
+    Функция загружает данные, обрабатывает временные зоны, выравнивает временные ряды
+    по датам и затем рассчитывает корреляцию только на общем временном периоде.
+
+    Args:
+        sector_tickers (list): Список тикеров акций, входящих в сектор.
+        crypto_ticker (str): Тикер криптовалюты для сравнения.
+
+    Returns:
+        dict or None: Словарь, содержащий:
+                      - 'df' (pandas.DataFrame): DataFrame с выровненными временными рядами сектора ('sector')
+                                                 и криптовалюты ('crypto').
+                      - 'correlation' (float): Рассчитанный коэффициент корреляции.
+                      Возвращает None, если исходные данные пусты или после выравнивания не осталось общих данных.
+    """
     # Получаем данные
     sector_series = create_sector_index(sector_tickers)
     crypto_series = fetch_ticker_data(crypto_ticker)
@@ -24,7 +42,8 @@ def get_correlation_data(sector_tickers, crypto_ticker):
     if aligned_df.empty:
         return None
 
-    # Расчет корреляции
+    # Возвращаем словарь с выровненным DataFrame и значением корреляции.
+    # Если корреляция не может быть рассчитана (pd.isna), возвращаем 0.0.
     correlation = aligned_df['sector'].corr(aligned_df['crypto'])
     return {
         'df': aligned_df,
