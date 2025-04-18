@@ -3,11 +3,14 @@ import psycopg2.errors
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from config.config import Config
 
+
 def create_database_if_not_exists():
     """
-    Подключается к 'postgres' (системной БД) и проверяет,
-    существует ли база `Config.PG_DB`. Если нет — создаёт её.
-    Требует прав суперпользователя или владельца.
+    Подключается к системной базе данных 'postgres' с использованием учетных данных
+    суперпользователя или владельца. Проверяет существование целевой базы данных,
+    указанной в Config.PG_DB. Если целевая база данных не существует, создает ее.
+
+    Требует соответствующих прав доступа к серверу PostgreSQL.
     """
     db_to_create = Config.PG_DB
 
