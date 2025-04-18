@@ -10,16 +10,18 @@ def calculate_purchases(
         exchange_rate: float = 75.0
 ) -> dict:
     """
-    Рассчитывает количество лотов/акций для покупки на основе оптимизированных весов.
-    Автоматически определяет тип актива по имени (крипто содержит '-USD').
+    Рассчитывает количество лотов/акций или единиц крипты для покупки
+    на основе оптимизированных весов и общего бюджета.
+    Автоматически определяет тип актива по наличию суффикса '-USD'.
 
-    Аргументы:
-        optimized_weights: OrderedDict с весами активов
-        total_budget: Общий бюджет в рублях
-        exchange_rate: Курс USD/RUB
+    Args:
+        optimized_weights: OrderedDict с активами и их оптимизированными весами (доля от общего портфеля).
+        total_budget: Общий бюджет в рублях, доступный для покупок.
+        exchange_rate: Курс USD/RUB, используется для расчетов с криптой. По умолчанию 75.0.
 
-    Возвращает:
-        Словарь с детализацией покупок
+    Returns:
+        dict: Словарь с детализацией планируемых покупок для каждого актива,
+              а также общая использованная сумма и остаток бюджета.
     """
     purchases = {}
     total_used = 0
@@ -43,8 +45,6 @@ def calculate_purchases(
 
                 _, preds = predict_future(asset, f'models/trained_models/btc_model.h5')
                 predicted_price = preds[-1]  # Последний прогнозируемый день
-                print(preds)
-                print("Predicted_price:", predicted_price)
             except Exception as e:
                 print(f"Ошибка прогноза: {e}")
                 predicted_price = get_last_price_crypto(asset)
