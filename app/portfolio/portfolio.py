@@ -1,8 +1,5 @@
-# portfolio.py
-import json
 from app.portfolio.portfolio_optimization import optimize_portfolio
 from app.data.data_loader import load_clean_data, load_analyst_returns
-from app.data.market_data import update_sector_data, update_sector_data_in_db
 from app.data.data_collector import collect_stock_data
 from app.services.tinkoff_api import get_usd_rub_cbr
 from app.portfolio.calculate_assets import calculate_purchases
@@ -10,20 +7,31 @@ from app.models.models import SectorData
 import numpy as np
 from app.services.crypto.crypto_api import get_last_price_crypto
 from config.config import Config
-from collections import OrderedDict
-from sqlalchemy import and_
 
 
 def extract_companies_and_weights(result):
     """
-    Извлекает список компаний и их веса из результата формирования портфеля.
-    Исключает компании с нулевым весом.
+    Извлекает список компаний/активов и их веса из результата первоначального
+    формирования портфеля (результат form_portfolio).
+
+    Веса рассчитываются как доля общей стоимости актива в рамках всей инвестированной суммы.
+    Исключает активы с рассчитанным весом, равным или менее нуля.
+
+    Args:
+        result (dict): Словарь с результатом работы функции form_portfolio.
+
+    Returns:
+        tuple: Кортеж из трех элементов:
+               - companies (list): Список тикеров активов.
+               - weights (list): Список соответствующих весов (долей).
+               - weight_dict (dict): Словарь {тикер: вес}.
     """
     portfolio = result.get('portfolio', {})
     companies = []
     weights = []
     weight_dict = {}
 
+    # Рассчитываем общую стоимость фактически инвестированных средств во всем портфеле
     total_cost = sum(
         asset.get('total_cost', 0)
         for sector_data in portfolio.values()
@@ -33,7 +41,9 @@ def extract_companies_and_weights(result):
     if total_cost == 0:
         raise ValueError("Общая стоимость портфеля равна нулю. Проверьте данные.")
 
+    # Итерация по секторам и активам для расчета весов относительно общей стоимости
     for sector_data in portfolio.values():
+        # Обработка каждого актива в текущем секторе
         for asset in sector_data['assets']:
             if isinstance(asset, dict) and 'asset' in asset:
                 asset_cost = asset.get('total_cost', 0)
@@ -45,21 +55,26 @@ def extract_companies_and_weights(result):
                     weights.append(weight)
                     weight_dict[asset['asset']] = weight
 
+    # Возвращаем список тикеров, список весов и словарь весов
     return companies, weights, weight_dict
 
 
 def print_purchases_result(purchases_result):
     """
-    Выводит детализированные результаты расчета покупок.
+    Выводит на консоль детализированные результаты расчета покупок.
 
-    Аргументы:
-        purchases_result: Словарь с результатами расчета покупок.
+    Показывает общую выделенную сумму, остаток бюджета и список покупок
+    для каждого актива с его характеристиками.
+
+    Args:
+        purchases_result (dict): Словарь с результатами расчета покупок,
+                                 полученный от функции calculate_purchases.
     """
     print("\nДетализация покупок:")
     total_allocated = purchases_result.get('total_allocated', 0)
     remaining_budget = purchases_result.get('remaining_budget', 0)
-    print(f"  Всего выделено: {total_allocated:.2f} руб.")
-    print(f"  Остаток бюджета: {remaining_budget:.2f} руб.")
+    print(f"  Всего выделено: {total_allocated: .2f} руб.")
+    print(f"  Остаток бюджета: {remaining_budget: .2f} руб.")
 
     for asset, details in purchases_result['purchases'].items():
         print(f"\n  Актив: {asset}")
@@ -70,20 +85,26 @@ def print_purchases_result(purchases_result):
 def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, target_beta=1.0, include_crypto=False,
                    exchange_rate=75.0):
     """
-    Формирует портфель для заданных секторов и, при необходимости, добавляет криптовалюту.
-    Акции покупаются в рублях, криптовалюты — в долларах.
+    Выполняет первоначальное распределение бюджета по активам внутри выбранных секторов.
 
-    Аргументы:
-      - sectors: словарь со списками активов по секторам (включая Crypto)
-      - selected_sectors: список секторов, выбранных пользователем
-      - max_asset_share: максимальная доля бюджета для одной акции
-      - total_budget: общий бюджет для инвестиций (в рублях)
-      - target_beta: целевое значение beta (по умолчанию 1.0)
-      - include_crypto: булев флаг, определяющий, нужно ли включать криптовалюты
-      - exchange_rate: курс доллара к рублю (по умолчанию 75.0)
+    Бюджет равномерно делится между выбранными секторами. Внутри каждого сектора
+    активы сортируются, и бюджет распределяется до достижения максимально допустимой
+    доли на актив или исчерпания бюджета сектора. Акции покупаются лотами,
+    криптовалюты - на оставшуюся в рамках лимита сумму.
 
-    Возвращает:
-      Словарь с распределением бюджета по секторам и расчетом портфельной beta
+    Args:
+      sectors (dict): Словарь с активами, сгруппированными по секторам.
+      selected_sectors (list): Список названий секторов, выбранных для инвестирования.
+      max_asset_share (float): Максимальная доля бюджета, которую можно выделить на один актив (от общего бюджета).
+      total_budget (float): Общий бюджет для инвестиций в рублях.
+      target_beta (float): Целевое значение beta для портфеля (используется в сортировке). По умолчанию 1.0.
+      include_crypto (bool): Флаг, указывающий, нужно ли включать криптовалюты, если они есть в конфигурации. По умолчанию False.
+      exchange_rate (float): Курс USD/RUB, используемый для пересчета цен крипты. По умолчанию 75.0.
+
+    Returns:
+      dict: Словарь с информацией о сформированном портфеле:
+            - 'portfolio' (dict): Распределение бюджета и активов по секторам.
+            - 'portfolio_beta' (float): Рассчитанная взвешенная бета сформированного портфеля.
     """
     portfolio = {}
 
@@ -92,14 +113,17 @@ def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, tar
         if "Crypto" not in selected_sectors:
             selected_sectors = selected_sectors + ["Crypto"]
 
+    # Равномерно распределяем общий бюджет между выбранными секторами
     num_sectors = len(selected_sectors)
     budget_per_sector = total_budget / num_sectors if num_sectors > 0 else 0
 
+    # Итерация по каждому выбранному сектору
     for sector in selected_sectors:
         if sector not in sectors:
             continue
 
         is_crypto_sector = (sector == "Crypto")
+        # Сортируем активы внутри сектора: сначала по удаленности беты от целевой, затем по стоимости лота/единицы
         assets = sorted(
             sectors[sector],
             key=lambda x: (
@@ -112,9 +136,10 @@ def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, tar
         remaining_budget = budget_per_sector
         num_assets = len(assets)
         min_allocation = budget_per_sector / num_assets if num_assets > 0 else 0
-        print(f"Для сектора {sector} min_allocation = {min_allocation}")
 
+        # Итерация по отсортированным активам сектора для распределения бюджета
         for i, asset in enumerate(assets):
+            # Получаем данные по активу, используя значения по умолчанию при необходимости
             price = float(asset.get('price', 1))
             lot_size = asset.get('lot_size', 1) if not is_crypto_sector else 1
             beta = asset.get('beta', 1.0)
@@ -135,6 +160,7 @@ def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, tar
             }
             allocations.append(allocation)
 
+            # Рассчитываем стоимость одной единицы актива или одного лота в рублях
             unit_cost = allocation['price'] * allocation['lot_size']
             max_invest = min(
                 budget_per_sector * max_asset_share,
@@ -157,7 +183,6 @@ def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, tar
                 allocation['quantity'] += quantity
                 allocation['total_cost'] += invest_amount
                 remaining_budget -= invest_amount
-                print(f"Куплено {quantity} {allocation['asset']} на сумму {invest_amount}. Осталось {remaining_budget}")
 
             # Сохраняем результаты
             sector_data = {
@@ -170,7 +195,7 @@ def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, tar
             }
             portfolio[sector] = sector_data
 
-    # Расчет общей beta портфеля
+    # Расчет общей beta портфеля на основе взвешенной беты каждого сектора
     total_invested = sum(
         sum(a['total_cost'] for a in s['assets'])
         for s in portfolio.values()
@@ -181,6 +206,7 @@ def form_portfolio(sectors, selected_sectors, max_asset_share, total_budget, tar
         for s in portfolio.values()
     ) if total_invested > 0 else 0
 
+    # Возвращаем словарь с деталями портфеля по секторам и общей бетой портфеля
     return {'portfolio': portfolio, 'portfolio_beta': portfolio_beta}
 
 
@@ -190,38 +216,37 @@ def create_and_optimize_portfolio(
         total_budget: float,
         target_beta: float = 1.0,
         include_crypto: bool = True,
-        use_db: bool = True  # Добавляем новый параметр
+        use_db: bool = True
 ):
     """
-    Формирует портфель, оптимизирует его и рассчитывает покупки на основе оптимизированных весов.
+    Оркестрирует весь процесс формирования и оптимизации портфеля:
+    собирает данные, выполняет первоначальное распределение, оптимизацию весов,
+    и рассчитывает финальное количество активов для покупки.
 
-    Аргументы:
-        selected_sectors: Список выбранных секторов
-        max_asset_share: Максимальная доля бюджета для одного актива
-        total_budget: Общий бюджет для инвестиций
-        target_beta: Целевое значение beta (по умолчанию 1.0)
-        include_crypto: Булев флаг для включения криптовалют (по умолчанию True)
-        use_db: Использовать базу данных или CSV (по умолчанию True)
+    Args:
+        selected_sectors (list): Список выбранных для инвестирования секторов.
+        max_asset_share (float): Максимальная доля бюджета, которую можно выделить на один актив (от общего бюджета).
+        total_budget (float): Общий бюджет для инвестиций в рублях.
+        target_beta (float): Целевое значение beta для оптимизации. По умолчанию 1.0.
+        include_crypto (bool): Флаг, указывающий, нужно ли включать криптовалюты в портфель. По умолчанию True.
+        use_db (bool): Флаг, указывающий, нужно ли использовать базу данных (True)
+                       для загрузки/сбора данных или CSV файл (False). По умолчанию True.
 
-    Возвращает:
-        Словарь с детализацией покупок
+    Returns:
+        dict: Словарь с детализированными результатами расчета покупок,
+              полученный от функции calculate_purchases.
     """
 
-    print("Начало create_and_optimize_portfolio")
-
-    print("Получение курса обмена")
     exchange_rate = get_usd_rub_cbr()
-    print(f"Курс обмена: {exchange_rate}")
 
-    # Обновление данных по секторам
-    # sectors_updated = update_sector_data()
-    # print(f"Данные по секторам: {sectors_updated}")
-
+    # Сбор актуальных данных по активам для первоначального распределения
     sectors_updated = {}
+    # Формируем список секторов для обработки, включая крипту при необходимости
     sectors_to_process = selected_sectors.copy()
     if include_crypto and "Crypto" in Config.SECTORS:
         sectors_to_process.append("Crypto")
 
+    # Итерация по секторам для сбора актуальных данных (цена, бета, лот) из БД или Config
     for sector in sectors_to_process:
         if sector not in Config.SECTORS:
             continue
@@ -252,8 +277,7 @@ def create_and_optimize_portfolio(
                 for stock in stocks
             ]
             sectors_updated[sector] = updated_stocks
-    print(f"Данные по секторам: {sectors_updated}")
-    # Формирование портфеля
+    # Выполняем первоначальное распределение бюджета по активам в выбранных секторах
     result = form_portfolio(
         sectors_updated,
         selected_sectors,
@@ -263,35 +287,28 @@ def create_and_optimize_portfolio(
         include_crypto=include_crypto,
         exchange_rate=exchange_rate
     )
-    print(f"Результат формирования портфеля: {result}")
 
-    print("Извлечение компаний и весов")
+    # Извлекаем список компаний и их веса из результата первоначального формирования
     companies, weights, weight_dict = extract_companies_and_weights(result)
-    print(f"Компании: {companies}")
-    print(f"Веса: {weights}")
-    print(f"Словарь весов: {weight_dict}")
 
-    print("Загрузка данных")
+    # Собираем исторические данные по ценам для активов. Сохранение в БД зависит от use_db.
     collect_stock_data(companies, days=365, use_db=use_db)  # Передаем use_db
-    print("Данные собраны в БД")
+
+    # Загружаем очищенные исторические данные (DataFrame)
     df_clean = load_clean_data(use_db=use_db)  # Передаем use_db
-    print("Данные загружены")
+
+    # Загружаем прогнозы аналитиков/модели
     mu_anal = load_analyst_returns(companies, use_db=use_db)  # Передаем use_db
-    print(f"Очищенные данные: {df_clean}")
-    print(f"Аналитические прогнозы: {mu_anal}")
 
-    print("Преобразование весов в numpy array")
+    # Преобразуем начальные веса в numpy array для функции оптимизации
+    # Убеждаемся, что порядок весов соответствует порядку активов в df_clean и mu_anal
     weights_array = np.array(list(weight_dict.values()))
-    print(f"Веса в виде numpy array: {weights_array}")
 
-    print("Оптимизация портфеля")
+    # Выполняем оптимизацию портфеля на основе очищенных данных, прогнозов и начальных весов
     optimized_weights = optimize_portfolio(df_clean, mu_anal, weights_array, max_asset_share)
-    print(f"Оптимизированные веса: {optimized_weights}")
 
-    print("Расчет покупок")
+    # Рассчитываем количество лотов/акций/единиц крипты для покупки на основе оптимизированных весов
     purchases_result = calculate_purchases(optimized_weights, total_budget, exchange_rate=exchange_rate)
     print_purchases_result(purchases_result)
-    print(f"Результат расчета покупок: {purchases_result}")
 
-    print("Конец create_and_optimize_portfolio")
     return purchases_result
