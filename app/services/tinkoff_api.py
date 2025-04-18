@@ -1,4 +1,3 @@
-# tinkoff_api.py
 import http.client
 import json
 from datetime import timedelta
@@ -19,7 +18,14 @@ import pandas as pd
 
 def get_usd_rub_cbr() -> float:
     """
-    Возвращает официальный курс USD/RUB от ЦБ РФ
+    Возвращает официальный курс USD/RUB от Центрального банка РФ
+    на текущий момент (или последний доступный).
+
+    Использует открытый API ЦБ РФ для получения ежедневных курсов.
+
+    Returns:
+        float: Официальный курс доллара США к рублю.
+        None: Если произошла ошибка при запросе или парсинге данных.
     """
     try:
         response = requests.get("https://www.cbr-xml-daily.ru/daily_json.js")
@@ -31,6 +37,17 @@ def get_usd_rub_cbr() -> float:
 
 
 def fetch_ticker_data(ticker):
+    """
+    Загружает историю цен закрытия (Close) по одному тикеру
+    за последний год из Yahoo Finance.
+
+    Args:
+        ticker (str): Тикер актива для загрузки данных.
+
+    Returns:
+        pandas.Series: Временной ряд цен закрытия, переименованный в соответствии с тикером.
+                       Возвращает пустую Series, если данные недоступны или произошла ошибка.
+    """
     """Загрузка истории Close по одному тикеру из YahooFinance."""
     try:
         today = datetime.date.today()
@@ -42,7 +59,22 @@ def fetch_ticker_data(ticker):
 
 
 def create_sector_index(tickers):
-    """Создание индекса для списка тикеров (средняя после нормализации)."""
+    """
+    Создает агрегированный индекс для списка тикеров акций.
+
+    Загружает исторические данные по каждому тикеру параллельно,
+    объединяет их, нормализует и рассчитывает среднее значение по каждой дате
+    для формирования временного ряда индекса сектора.
+
+    Args:
+        tickers (list): Список тикеров акций, входящих в сектор.
+
+    Returns:
+        pandas.Series: Временной ряд, представляющий агрегированный индекс сектора
+                       (среднее значение после нормализации по датам).
+                       Возвращает пустую Series, если данные не удалось загрузить
+                       или обработать для всех тикеров.
+    """
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(fetch_ticker_data, tickers))
 
@@ -55,9 +87,24 @@ def create_sector_index(tickers):
     sector_df.dropna(axis=0, how="all", inplace=True)
     return normalize_data(sector_df).mean(axis=1)
 
+
 @lru_cache(maxsize=100)
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def get_figi_by_ticker(ticker: str) -> str:
+    """
+    Возвращает FIGI (финансовый идентификатор инструмента) для указанного тикера акций,
+    используя Tinkoff Invest API.
+
+    Args:
+        ticker (str): Тикер акции (например, 'SBER').
+
+    Returns:
+        str: FIGI инструмента.
+        None: Для криптовалютных тикеров (содержащих '-USD').
+
+    Raises:
+        ValueError: Если инструмент по тикеру не найден в API.
+    """
     time.sleep(0.5)
     if "-USD" in ticker:
         return None
@@ -73,11 +120,23 @@ def get_figi_by_ticker(ticker: str) -> str:
             return response.instrument.figi
         except:
             raise ValueError(f"Инструмент {ticker} не найден")
+
+
 @lru_cache(maxsize=100)
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def get_beta_by_ticker(ticker: str) -> float:
+    """
+    Возвращает коэффициент beta для указанного тикера акций,
+    используя Tinkoff Invest Public API (через эндпоинт GetAssetFundamentals).
+
+    Args:
+        ticker (str): Тикер акции.
+
+    Returns:
+        float: Значение коэффициента beta.
+        None: Если не удалось получить asset_uid или данные beta отсутствуют.
+    """
     time.sleep(0.5)
-    """Возвращает коэффициент beta для указанного тикера."""
     try:
         asset_uid = get_assetuid_by_ticker(ticker)
         if not asset_uid:
@@ -93,7 +152,7 @@ def get_beta_by_ticker(ticker: str) -> float:
         }
 
         conn.request("POST", "/rest/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssetFundamentals",
-                    payload, headers)
+                     payload, headers)
         res = conn.getresponse()
         data = json.loads(res.read().decode("utf-8"))
 
@@ -106,7 +165,22 @@ def get_beta_by_ticker(ticker: str) -> float:
         print(f"Ошибка при получении данных: {e}")
         return None
 
+
 def get_uid_by_ticker(ticker: str) -> str:
+    """
+    Возвращает UID (уникальный идентификатор инструмента) для указанного тикера акций,
+    используя Tinkoff Invest API.
+
+    Args:
+        ticker (str): Тикер акции.
+
+    Returns:
+        str: UID инструмента.
+        None: Для криптовалютных тикеров (содержащих '-USD').
+
+    Raises:
+        ValueError: Если инструмент по тикеру не найден в API.
+    """
     if "-USD" in ticker:
         return None
     with Client(Config.TOKEN) as client:
@@ -122,7 +196,22 @@ def get_uid_by_ticker(ticker: str) -> str:
         except:
             raise ValueError(f"Инструмент {ticker} не найден")
 
+
 def get_lot_by_ticker(ticker: str) -> str:
+    """
+    Возвращает размер лота для указанного тикера акций,
+    используя Tinkoff Invest API.
+
+    Args:
+        ticker (str): Тикер акции.
+
+    Returns:
+        str: Размер лота инструмента.
+        None: Для криптовалютных тикеров (содержащих '-USD').
+
+    Raises:
+        ValueError: Если инструмент по тикеру не найден в API.
+    """
     if "-USD" in ticker:
         return None
     with Client(Config.TOKEN) as client:
@@ -138,7 +227,20 @@ def get_lot_by_ticker(ticker: str) -> str:
         except:
             raise ValueError(f"Инструмент {ticker} не найден")
 
+
 def get_candles_data(figi, days=365):
+    """
+    Возвращает исторические свечи (данные по ценам: открытие, закрытие, максимум, минимум, объем)
+    для инструмента по его FIGI, используя Tinkoff Invest API.
+
+    Args:
+        figi (str): FIGI инструмента.
+        days (int): Количество дней исторических данных для загрузки. По умолчанию 365.
+
+    Returns:
+        list: Список объектов свечей (Candle). Возвращает пустой список, если данные отсутствуют,
+              FIGI не предоставлен или произошла ошибка.
+    """
     if not figi:
         return []
     with Client(Config.TOKEN) as client:
@@ -150,7 +252,22 @@ def get_candles_data(figi, days=365):
         )
         return candles.candles if candles.candles else []
 
+
 def get_assetuid_by_ticker(ticker: str) -> str:
+    """
+    Возвращает asset_uid (уникальный идентификатор актива) для указанного тикера акций,
+    используя Tinkoff Invest API.
+
+    Требуется для некоторых запросов Public API (например, для получения фундаментальных данных).
+
+    Args:
+        ticker (str): Тикер акции.
+
+    Returns:
+        str: asset_uid актива.
+        None: Для криптовалютных тикеров (содержащих '-USD'), если инструмент не найден
+              или произошла ошибка.
+    """
     if "-USD" in ticker:
         return None
     try:
@@ -166,9 +283,25 @@ def get_assetuid_by_ticker(ticker: str) -> str:
     except Exception as e:
         print(f"Ошибка при поиске инструмента: {e}")
         return None
+
+
 @lru_cache(maxsize=100)
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def get_forecast_by_ticker(ticker: str, is_sandbox: bool = True):
+    """
+    Возвращает данные консенсус-прогноза аналитиков для указанного тикера акций,
+    используя Tinkoff Invest Public API (эндпоинт GetForecastBy).
+
+    Args:
+        ticker (str): Тикер акции.
+        is_sandbox (bool): Флаг, указывающий, использовать эндпоинт Sandbox (True)
+                           или Production (False). По умолчанию True.
+
+    Returns:
+        dict or None: Словарь с данными консенсус-прогноза (извлеченными функцией extract_consensus_data)
+                      или None, если данные отсутствуют, не удалось извлечь консенсус-данные
+                      или произошла ошибка.
+    """
     time.sleep(0.5)
     if is_sandbox:
         conn = http.client.HTTPSConnection("sandbox-invest-public-api.tinkoff.ru")
@@ -200,11 +333,24 @@ def get_forecast_by_ticker(ticker: str, is_sandbox: bool = True):
     except Exception as e:
         print(f"Ошибка при запросе прогноза для тикера {ticker}: {e}")
         return None
+
+
 @lru_cache(maxsize=100)
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def get_last_price(instrument_id):
+    """
+    Возвращает последнюю цену для инструмента по его instrument_id,
+    используя Tinkoff Invest Public API (эндпоинт GetLastPrices).
+
+    Args:
+        instrument_id (str): instrumentId (FIGI или UID) инструмента.
+
+    Returns:
+        float: Последняя цена инструмента в виде числа с плавающей точкой.
+        None: Если не удалось получить данные о цене, данные отсутствуют
+              или произошла ошибка.
+    """
     time.sleep(0.5)
-    import requests
     url = "https://invest-public-api.tinkoff.ru/rest/tinkoff.public.invest.api.contract.v1.MarketDataService/GetLastPrices"
     headers = {
         "Authorization": f"Bearer {Config.TOKEN}",

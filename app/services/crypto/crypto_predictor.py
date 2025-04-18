@@ -6,6 +6,20 @@ import pickle
 
 
 def load_data(ticker):
+    """
+    Загружает исторические данные по тикеру с Yahoo Finance и выполняет
+    необходимую предобработку для модели прогнозирования.
+
+    Преобразования включают расчет натурального логарифма цены закрытия
+    и разницы логарифмов цен. Данные загружаются за последние 5 лет.
+
+    Args:
+        ticker (str): Тикер актива для загрузки данных.
+
+    Returns:
+        pandas.DataFrame: DataFrame с оригинальной ценой закрытия ('close')
+                          и преобразованными колонками ('log_close', 'diff_log').
+    """
     end_date = datetime.now()
     start_date = end_date - timedelta(days=5 * 365)
     df = yf.download(ticker, start=start_date, end=end_date, progress=False)
@@ -16,6 +30,24 @@ def load_data(ticker):
 
 
 def predict_future(ticker, model_path, n_steps=60, n_future=30):
+    """
+    Загружает предобученную модель прогнозирования и scaler,
+    выполняет прогнозирование будущих цен на основе исторических данных.
+
+    Прогнозирование выполняется на n_future шагов вперед, используя
+    последние n_steps преобразованных данных в качестве входной последовательности для модели.
+
+    Args:
+        ticker (str): Тикер актива для прогнозирования.
+        model_path (str): Путь к файлу обученной модели Keras (.h5).
+        n_steps (int): Длина входной последовательности данных для модели. По умолчанию 60.
+        n_future (int): Количество шагов (дней) для прогнозирования в будущее. По умолчанию 30.
+
+    Returns:
+        tuple: Кортеж из двух элементов:
+               - future_dates (list): Список объектов datetime для предсказанных будущих дат.
+               - predictions (numpy.array): Массив прогнозируемых цен на будущие даты.
+    """
     # Загрузка обученной модели и scaler
     model = load_model(model_path)
     scaler_path = model_path.replace('.h5', '_scaler.pkl')
