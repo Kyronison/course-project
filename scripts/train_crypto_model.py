@@ -1,15 +1,27 @@
 from datetime import datetime, timedelta
-import numpy as np
-import pandas as pd
 import yfinance as yf
 from keras.src.layers import LSTM, Dropout, Dense
 from sklearn.preprocessing import MinMaxScaler
 from keras.src.models import Sequential
-import tensorflow as tf
 import numpy as np
 
 
 def load_data(ticker):
+    """
+    Загружает исторические данные по тикеру с Yahoo Finance и выполняет
+    необходимую предобработку для модели прогнозирования.
+
+    Данные загружаются за последние 5 лет. Преобразования включают расчет
+    натурального логарифма цены закрытия и разницы логарифмов цен,
+    которые часто используются для стабилизации временного ряда.
+
+    Args:
+        ticker (str): Тикер актива для загрузки данных (например, 'BTC-USD').
+
+    Returns:
+        pandas.DataFrame: DataFrame с оригинальной ценой закрытия ('close')
+                          и преобразованными колонками ('log_close', 'diff_log').
+    """
     end_date = datetime.now()
     start_date = end_date - timedelta(days=5 * 365)
     df = yf.download(ticker, start=start_date, end=end_date, progress=False)
@@ -20,6 +32,23 @@ def load_data(ticker):
 
 
 def create_sequences(data, n_steps=60, n_future=30):
+    """
+    Создает последовательности входных данных (X) и соответствующих целевых значений (y)
+    из предобработанных данных для обучения LSTM модели.
+
+    Использует MinMaxScaler для нормализации данных 'diff_log'.
+
+    Args:
+        data (pandas.DataFrame): DataFrame с предобработанными данными, включая колонку 'diff_log'.
+        n_steps (int): Длина каждой входной последовательности X (количество шагов истории). По умолчанию 60.
+        n_future (int): Количество шагов в будущее, которое модель должна предсказать (длина целевой последовательности y). По умолчанию 30.
+
+    Returns:
+        tuple: Кортеж из трех элементов:
+               - X (numpy.array): Массив входных последовательностей формы (количество_образцов, n_steps, 1).
+               - y (numpy.array): Массив целевых последовательностей формы (количество_образцов, n_future).
+               - scaler (MinMaxScaler): Обученный объект MinMaxScaler, использованный для нормализации.
+    """
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled = scaler.fit_transform(data[['diff_log']])
     X, y = [], []
@@ -30,6 +59,19 @@ def create_sequences(data, n_steps=60, n_future=30):
 
 
 def build_model(n_steps=60, n_future=30):
+    """
+    Строит и компилирует архитектуру LSTM модели прогнозирования.
+
+    Модель состоит из нескольких слоев LSTM, Dropout для регуляризации
+    и выходного Dense слоя для предсказания будущих значений.
+
+    Args:
+        n_steps (int): Размерность входной последовательности (количество шагов истории). По умолчанию 60.
+        n_future (int): Размерность выходного слоя (количество шагов прогноза в будущее). По умолчанию 30.
+
+    Returns:
+        keras.models.Sequential: Скомпилированный экземпляр модели Keras.
+    """
     model = Sequential([
         LSTM(128, return_sequences=True, input_shape=(n_steps, 1)),
         Dropout(0.3),
@@ -42,8 +84,19 @@ def build_model(n_steps=60, n_future=30):
     return model
 
 
-
 def train_and_save(ticker, model_save_path, epochs=10, batch_size=32, n_steps=60, n_future=30):
+    """
+    Оркестрирует процесс тренировки LSTM модели прогнозирования и сохранения
+    модели и обученного scaler'а в файлы.
+
+    Args:
+        ticker (str): Тикер актива для тренировки модели.
+        model_save_path (str): Путь для сохранения файла обученной модели (.h5).
+        epochs (int): Количество эпох тренировки. По умолчанию 10.
+        batch_size (int): Размер батча для тренировки. По умолчанию 32.
+        n_steps (int): Длина входной последовательности для модели. По умолчанию 60.
+        n_future (int): Количество шагов для предсказания. По умолчанию 30.
+    """
     df = load_data(ticker)
     X, y, scaler = create_sequences(df, n_steps, n_future)
     model = build_model(n_steps, n_future)
