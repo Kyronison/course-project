@@ -56,7 +56,7 @@
     SECRET_KEY=ваш_очень_секретный_ключ_flask
     
     # API Токен Tinkoff
-    TOKEN="t.r8FKw4DB8EUWXKeIZg4_HXKqFL3eH9rHbXvJa285qb-ROsUhBNprW9vOMmwqulFrS_2939mC6XkNQ-zcgCMz-Q"
+    TOKEN="<Вставьте ваш токен из Т-инвестицйи>"
     
     # Другие переменные окружения, если нужны
     FLASK_ENV=development
